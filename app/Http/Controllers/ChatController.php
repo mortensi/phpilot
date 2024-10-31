@@ -36,13 +36,13 @@ class ChatController extends Controller
 
 
     public function chat(Request $request)
-    {  
+    {   
+        // Get the session ID for user history TBD
         $value = $request->session()->getId();
 
         $cache = new RedisSemanticCache($this->predis);
 
         $docs = $cache->isInCache($request->input('q'));
-        Log::info("Results from the cache: ".$docs[0]);
 
         // If the question is in the cache, return the answer
         if ($docs[0] > 0) {
