@@ -1,0 +1,56 @@
+.bubble {
+    display: block;
+    position: relative;
+    padding: 16px;
+    -webkit-border-radius: 0.375rem;
+    -moz-border-radius: 0.375rem;
+    border-radius: 0.375rem;
+    margin-bottom: 2em;
+    border: 1px solid;
+    border-color: #888;
+    clear: both;
+    font-size: 1.125rem;
+}
+
+.bubble ul, ol{
+    padding: 10px;
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
+.bubble-initial {
+    float: left;
+    max-width:90%;
+    background-color: #FAFAFA;
+    color:#000;
+    border-top-left-radius: 0px;
+}
+
+.bubble-left {
+    float: left;
+    max-width:90%;
+    background-color: #FAFAFA;
+    color:#000;
+    border-top-left-radius: 0px;
+}
+
+.bubble-right {
+    float:right;
+    margin-left:10%
+    max-width:40%;
+    background-color: #FFF;
+    color:#000;
+    border-bottom-right-radius: 0px;
+}
+
+#conversation p a{
+    color: #5866F6;
+}
+
+#conversation p a:hover{
+    color: #3728BA;
+}
+
+#conversation p li{
+    margin-bottom: 10px:
+}
