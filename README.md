@@ -41,18 +41,25 @@ OPENAI_API_KEY=your_openai_api_key
 ```
 git clone https://github.com/mortensi/phpilot.git
 cd phpilot
-
 composer install
-
-php artisan serve
-
-php artisan queue:work
 ```
 
-Then, before launching, cache configurations and routes.
+
+## Execution
+
+Before launching, cache configurations and routes. It's optional, but recommended for production environments.
 
 ```
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
+
+Now you can launch the server and the worker process that will listen for jobs on the queue and process them as they arrive. This is used to process new CSV files and create embeddings.
+
+```
+php artisan serve
+php artisan queue:work
+```
+
+Point your browser to [http://127.0.0.1:8000/](http://127.0.0.1:8000/) and start testing!
