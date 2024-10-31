@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Predis\Client;
 use Predis\Command\Argument\Search\SearchArguments;
 use Predis\PredisException;
+use Predis\Command\Argument\Search\DropArguments;
 use App\Jobs\CSVEmbedderTask;
 
 class DataController extends Controller
@@ -130,7 +131,7 @@ class DataController extends Controller
     {
         $data = $request->all();
         Log::info("Dropping index: ", ['data' => $data['name']]);
-        $this->predis->ftDropIndex($data['name']);
+        $this->predis->ftDropIndex($data['name'], (new DropArguments())->dd());
         return redirect()->route('data.index');
     }
 
