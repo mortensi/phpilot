@@ -8,7 +8,6 @@ use LLPhant\Query\SemanticSearch\QuestionAnswering;
 use Illuminate\Support\Facades\Log;
 use Predis\Client;
 use LLPhant\Chat\OpenAIChat;
-use LLPhant\Audio\OpenAIAudio;
 use LLPhant\OpenAIConfig;
 use Illuminate\Http\Request;
 use Psr\Http\Message\StreamInterface;
@@ -29,16 +28,18 @@ class ChatController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('chat');
+        $sessionId = $request->session()->getId();
+        $history = $this->predis->xrange(sprintf('phpilot:memory:%s', $sessionId), '-', '+');
+        return view('chat', ['history' => $history]);
     }
 
 
     public function chat(Request $request)
     {   
-        // Get the session ID for user history TBD
-        $value = $request->session()->getId();
+        // Get the session ID for user history
+        $sessionId = $request->session()->getId();
 
         $cache = new RedisSemanticCache($this->predis);
 
@@ -47,6 +48,13 @@ class ChatController extends Controller
         // If the question is in the cache, return the answer
         if ($docs[0] > 0) {
             echo $docs[2][1];
+            $this->predis->xadd(sprintf('phpilot:memory:%s', $sessionId), 
+                ['UserMessage' => $request->input('q'), 'AiMessage' => $docs[2][1]],
+                 '*',
+                  ['trim' => ['MAXLEN', '~', 20]]);
+
+            // Set the history expiration time, same as session lifetime
+            $this->predis->expire(sprintf('phpilot:memory:$s', $sessionId), config('session.lifetime'));
             return;
         }
 
@@ -116,6 +124,15 @@ class ChatController extends Controller
 
         // Add the question and answer to the cache
         $cache->addToCache($request->input('q'), $fullAnswer);
+
+        // Add the question and answer to the history
+        $this->predis->xadd(sprintf('phpilot:memory:%s', $sessionId), 
+            ['UserMessage' => $request->input('q'), 'AiMessage' => $fullAnswer],
+            '*',
+            ['trim' => ['MAXLEN', '~', 20]]);
+
+        // Set the history expiration time, same as session lifetime
+        $this->predis->expire(sprintf('phpilot:memory:$s', $sessionId), config('session.lifetime'));
     }
 }
 

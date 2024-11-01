@@ -1,17 +1,21 @@
 var converter = new showdown.Converter();
 
 function bubbles(endpoint, history, callback=undefined){
-
-    // Ensure history is an array and use it
-    if (Array.isArray(history)) {
-    	history.forEach(function(value) {
-            if (value.type == "UserMessage")
-            	$( "#conversation" ).append('<div class="bubble bubble-right">' + value.content + '</div>');
-        	if (value.type == "AiMessage")
-            	$( "#conversation" ).append('<div class="bubble bubble-left">' + converter.makeHtml(value.content) + '</div>');
+    // Check if `history` is an object
+    if (typeof history === 'object' && history !== null) {
+        // Iterate over each item in the object
+        Object.values(history).forEach(function(value) {
+            if (value.UserMessage) {
+                // Append user message
+                $("#conversation").append('<div class="bubble bubble-right">' + value.UserMessage + '</div>');
+            }
+            if (value.AiMessage) {
+                // Append AI message
+                $("#conversation").append('<div class="bubble bubble-left">' + converter.makeHtml(value.AiMessage) + '</div>');
+            }
         });
     } else {
-        console.error('Expected an array, but got:', conversation);
+        console.error('Expected an object, but got:', history);
     }
 
     scroll();

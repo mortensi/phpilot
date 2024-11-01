@@ -67,5 +67,5 @@
         $(".button").prop("disabled", true);
     }
     
-    bubbles("{{ url('/chat') }}", /*[[${conversation}]]*/ [], bubbles_cb);
+    bubbles("{{ url('/chat') }}", @json($history), bubbles_cb);
 </script>
