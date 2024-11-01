@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Predis\Client;
+use Predis\Client as PredisClient;
 use Predis\Command\Argument\Search\SearchArguments;
 use Predis\PredisException;
 use Predis\Command\Argument\Search\DropArguments;
@@ -18,14 +18,9 @@ class DataController extends Controller
 {
     protected $predis;
 
-    public function __construct()
+    public function __construct(PredisClient $redis)
     {
-        $this->predis = new Client([
-            'scheme' => 'tcp',
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'port' => env('REDIS_PORT', 6379),
-            'password' => env('REDIS_PASSWORD', ''),
-        ]);
+        $this->predis = $redis;
     }
 
     // This method will handle requests to '/data'

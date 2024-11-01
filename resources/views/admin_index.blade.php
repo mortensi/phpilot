@@ -1,4 +1,1 @@
-<h1>{{$text}}</h1>
-
-
-{{$session}}
+<h1>Admin</h1>

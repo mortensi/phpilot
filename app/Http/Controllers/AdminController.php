@@ -28,6 +28,7 @@ class AdminController extends Controller
         return view('admin_index', ['text' => $text]);  
      } 
 
+
      public function reset(Request $request)
      {  
         $value = $request->session()->getId();
@@ -42,24 +43,6 @@ class AdminController extends Controller
 
      public function show(Request $request)
      {  
-        // session
-        $value = $request->session()->put('session', 'my session value');
-        $value = $request->session()->get('session');
-        
-        // cache
-        Cache::put('cached_key', 'cached value', 60);
-        $value = Cache::get('cached_key');
-        
-        // database
-        Redis::set('test', generateRandomString());
-
-        // job
-        $message = 'Hello, this is a queued message!';
-
-        // Dispatch the job
-        EchoJob::dispatch($message);
-
-        return view('admin_index', ['text' => Redis::get('test'),
-                                    'session' => $value]);
+        return view('admin_index');
      }
 }

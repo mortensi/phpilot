@@ -4,23 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Core\RedisSemanticCache;
-use Predis\Client;
-use Illuminate\Support\Facades\Log;
+use Predis\Client as PredisClient;
 
 class CacheController extends Controller
 {
     protected $predis;
     protected $cache;
 
-    public function __construct()
+    public function __construct(PredisClient $redis)
     {
-        $this->predis = new Client([
-            'scheme' => 'tcp',
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'port' => env('REDIS_PORT', 6379),
-            'password' => env('REDIS_PASSWORD', ''),
-        ]);
-
+        $this->predis = $redis;
         $this->cache = new RedisSemanticCache($this->predis);
     }
 

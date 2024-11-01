@@ -6,7 +6,7 @@ use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAI3SmallEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Redis\RedisVectorStore;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
 use Illuminate\Support\Facades\Log;
-use Predis\Client;
+use Predis\Client as PredisClient;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
 use Illuminate\Http\Request;
@@ -18,14 +18,9 @@ class ChatController extends Controller
 {
     protected $predis;
 
-    public function __construct()
+    public function __construct(PredisClient $redis)
     {
-        $this->predis = new Client([
-            'scheme' => 'tcp',
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'port' => env('REDIS_PORT', 6379),
-            'password' => env('REDIS_PASSWORD', ''),
-        ]);
+        $this->predis = $redis;
     }
 
     public function index(Request $request)
