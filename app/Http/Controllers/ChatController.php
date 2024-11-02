@@ -155,8 +155,7 @@ class ChatController extends Controller
 
     private function getHistory()
     {
-        // Let's fetch the conversation history from Redis and summarize it with the question
-        // Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+        // Let's fetch the conversation history from Redis and format it nicely
         $history = $this->predis->xrange(sprintf('phpilot:memory:%s', $this->sessionId), '-', '+');
 
         $output = '';
