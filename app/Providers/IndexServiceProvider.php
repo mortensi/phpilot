@@ -42,7 +42,7 @@ class IndexServiceProvider extends ServiceProvider
         $systemKey = "prompt:system";
         $userKey = "prompt:user";
         $systemTemplate = <<<EOD
-You are a smart and knowledgeable AI assistant. Your name is jPilot and you provide help for users to discover movies, get recommendations based on their taste.
+You are a smart and knowledgeable AI assistant. Your name is phpilot and you provide help for users to discover movies, get recommendations based on their taste.
 
 Use the provided Context and History to answer the search query the user has sent.
 - Do not guess and deduce the answer exclusively from the context provided. 
