@@ -1,6 +1,13 @@
 # phpilot
 
-phpilot is yet another PHP GenAI chatbot. Based on [Minipilot](https://github.com/redis/minipilot) (developed in Python with Flask, OpenAI and LangChain), phpilot is a demo written in PHP with OpenAI, LLPhant, Laravel, Blade and JQuery. 
+phpilot is yet another PHP GenAI chatbot. Based on [Minipilot](https://github.com/redis/minipilot) (developed in Python with Flask, OpenAI and LangChain), phpilot is a demo written in PHP using:
+
+- The Laravel framework and the Blade templating system
+- The LLPhant GenAI framework 
+- Some JQuery for UI interactions
+- The Bulma CSS framework
+
+![demo](public/images/phpilot.gif)
 
 From the browser UI you will be able to:
 

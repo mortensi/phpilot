@@ -27,7 +27,6 @@ class DataController extends Controller
     public function index(Request $request)
     {
         $data = [];
-        $idx_overview = [];
         // The Redis facade is designed to handle core Redis commands, but not custom module commands like those from RediSearch.
         // In any case, using the facade will add a prefix to the index name
         // E.g. FT.SEARCH phpilot:phpilot_data_idx *
@@ -38,7 +37,7 @@ class DataController extends Controller
         // This works
         //$existingIndexes = Redis::ftinfo("phpilot_data_idx");
 
-        // Let's use the Predis client directly: if using the facade, the index name will be prefixed
+        // Let's use the Predis client directly: if using the facade, the index name would be prefixed
         //$predis = Redis::connection();
         
         $arguments = new SearchArguments();
@@ -134,7 +133,7 @@ class DataController extends Controller
     {
         $data = $request->all();
 
-        $filename = $this->predis->hget("data:".$data['id'], "filename");
+        $filename = Redis::hget("data:".$data['id'], "filename");
         Log::info("Removing file: ".$filename);
 
         // Check if the file exists before trying to delete
@@ -149,7 +148,7 @@ class DataController extends Controller
             Log::info("File does not exist.");
         }
 
-        $this->predis->del("data:".$data['id']);
+        Redis::del("data:".$data['id']);
         return redirect()->route('data.index');
     }
 

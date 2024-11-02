@@ -11,9 +11,9 @@ Route::get('/', [ChatController::class, 'index']);
 
 Route::get('/admin', 'App\Http\Controllers\AdminController@index');
 Route::get('/admin/show', 'App\Http\Controllers\AdminController@show');
-Route::post('/reset', 'App\Http\Controllers\AdminController@reset');
 
 Route::post('/chat', 'App\Http\Controllers\ChatController@chat');
+Route::post('/chat/reset', [ChatController::class, 'reset'])->name('chat.reset');
 
 Route::get('/data', [DataController::class, 'index'])->name('data.index');
 Route::get('/data/index/current', [DataController::class, 'current'])->name('data.current');

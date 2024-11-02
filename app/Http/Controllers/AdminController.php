@@ -23,22 +23,9 @@ class AdminController extends Controller
 {
     public function index()
      {
-
         $text = "Hello Cruel World";
         return view('admin_index', ['text' => $text]);  
      } 
-
-
-     public function reset(Request $request)
-     {  
-        $value = $request->session()->getId();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Task created successfully!'
-        ], 201);
-        
-    }
 
 
      public function show(Request $request)

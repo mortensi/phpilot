@@ -35,7 +35,7 @@
                     $.ajax({
                         type: "POST",
                         dataType: "json",
-                        url: "{{ url('/reset') }}",
+                        url: "{{route('chat.reset')}}",
                         processData: true,
 						headers: {
 							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Add CSRF token here
