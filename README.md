@@ -20,6 +20,10 @@ From the browser UI you will be able to:
 
 ## Configuring phpilot
 
+Make sure you have MySQL and Redis databases running.
+
+For Redis as a vector database, you can use [Redis Stack](https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/) or [Redis 8.0-M01](https://hub.docker.com/layers/library/redis/8.0-M01/images/sha256-d1244a25c9e33a4995ee850c5a489b7213ca8fa5e94a311429d6873c5011e196?context=explore) as starting from version 8 Redis integrates all the search, vector search, JSON data modeling, time series and probabilistic data structure features. [Read more](https://redis.io/blog/redis-8-0-m01-released-one-redis-for-every-use-case/).
+
 Configure the following variables as environment variables (using `export`) or in a `.env` file stored in the root directory of the project
 
 ```
