@@ -87,14 +87,19 @@ class ChatController extends Controller
         $systemPrompt = $this->predis->get('phpilot:prompt:system');
         
         // Process the conversation history and add to the system prompt
-        $systemPrompt = str_replace('{history}', $this->getSummarizedHistory($request->input('q')), $systemPrompt);
+        // I do summarize the history together with the question, to be used for a more context-aware retrieval
+        $summarizedHistory = $this->getHistory();
+        $systemPrompt = str_replace('{history}', $summarizedHistory, $systemPrompt);
         
         // Use my own system prompt
         $qa->systemMessageTemplate = $systemPrompt;
 
-        // Summarized history and question, to be used for retrieval
-        $summarizedHistory = $this->getSummarizedHistory($request->input('q'));
-        $stream = $qa->answerQuestionStream($summarizedHistory);
+        // Summarize the conversation history and the question into the follow-up question
+        // The follow-up question enables conversation-aware retrieval
+        $followUpQuestion = $this->getFollowUpQuestion($request->input('q'));
+
+        // answerQuestionStream will perform retrieval, update the system message template with the context using the follow-up question and generate the answer 
+        $stream = $qa->answerQuestionStream($followUpQuestion);
 
         $streamToIterator = function (StreamInterface $stream): \Generator {
             while (!$stream->eof()) {
@@ -111,10 +116,12 @@ class ChatController extends Controller
             $fullAnswer .= $chunk;
         }
 
-        // Add the question and answer to the cache
-        $cache->addToCache($summarizedHistory, $fullAnswer);
+        // Add the follow-up question and answer to the cache
+        // It's better to cache the follow-up question and the full answer, to be able to retrieve the full answer later when using semantic caching
+        $cache->addToCache($followUpQuestion, $fullAnswer);
 
         // Add the question and answer to the history
+        // Here we use the original question, not the follow-up question
         $this->predis->xadd(sprintf('phpilot:memory:%s', $this->sessionId), 
             ['UserMessage' => $request->input('q'), 'AiMessage' => $fullAnswer],
             '*',
@@ -125,7 +132,7 @@ class ChatController extends Controller
     }
 
 
-    private function getSummarizedHistory($question)
+    private function getFollowUpQuestion($question)
     {
         // Let's fetch the conversation history from Redis and summarize it with the question
         // Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
@@ -140,7 +147,30 @@ class ChatController extends Controller
         // Generate a response to the follow up question
         $response = $chat->generateText(sprintf("Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, use only the English language. \n\n Chat history: /n%s \n\n Follow up input: %s", $historyText, $question));
         
+        Log::info("Summarized history: " . $response);
+
         return $response;
+    }
+
+
+    private function getHistory()
+    {
+        // Let's fetch the conversation history from Redis and summarize it with the question
+        // Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question, in its original language.
+        $history = $this->predis->xrange(sprintf('phpilot:memory:%s', $this->sessionId), '-', '+');
+
+        $output = '';
+        // Iterate through each entry
+        foreach ($history as $entry) {
+            if (isset($entry['UserMessage'])) {
+                $output .= "Human: " . $entry['UserMessage'] . "\n";
+            }
+            if (isset($entry['AiMessage'])) {
+                $output .= "AI: " . $entry['AiMessage'] . "\n";
+            }
+        }
+
+        return json_encode($history);
     }
 
 
