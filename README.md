@@ -46,6 +46,13 @@ QUEUE_CONNECTION=redis
 OPENAI_API_KEY=your_openai_api_key
 ```
 
+Note also that to upload large files, you need to update the `php.ini` configuration file with:
+
+```
+upload_max_filesize = 100M
+post_max_size = 100M
+```
+
 
 ## Installation
 
